@@ -1,5 +1,7 @@
 #Change name of class
 class MinlocScraper
+  attr_accessor :services
+  
   FT_MINERAL_OCCURRENCE_PORTRAYAL = "mo:MinOccView"
   FT_MINERAL_OCCURRENCE = "er:MineralOccurrence"
   
@@ -18,23 +20,19 @@ class MinlocScraper
   def proxy
     @proxy
   end
-	
+ 
   
-  def create_services(services)
-    states = services.keys
+  def create_services(service_hash)
+	@services = Hash.new
+    states = service_hash.keys
     states.each do |state|
-	puts state
-      s = services[state]
+      s = service_hash[state]
       if !s.nil?
 		service=Service.new(s)
 		service.create_agent(@proxy)
 		if service.feature_type?(FT_MINERAL_OCCURRENCE_PORTRAYAL)
-		  response=service.get_features(FT_MINERAL_OCCURRENCE_PORTRAYAL,nil,5)
-		  #parse(response, FT_MINERAL_OCCURRENCE_PORTRAYAL)
-		  
-		else
-          occurrence_check(service,state)
-		end		
+		  @services[state] = service
+		end
       end
     end
   end
